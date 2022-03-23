@@ -4,7 +4,6 @@ on:
   push:
     branches: [ $default-branch ]
   pull_request:
-    branches: [ $default-branch ]
     # There are a default set of these enabled - you may need to add closed if you want to run a workflow
     # on merge.
     types:
@@ -35,11 +34,6 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     outputs:
       output1: ${{ steps.output1.outputs.test }}
-
-    # Allow the job to write github packages
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       # Check out the code to begin with
