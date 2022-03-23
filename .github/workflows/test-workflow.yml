@@ -61,7 +61,7 @@ jobs:
       contents: read
       packages: write
     # Run this job just for releases
-    if: ${{ github.event_type == "release" }}
+    if: github.event_type == "release"
     steps:
       - name: Publishing package
         # An example of a conditional
