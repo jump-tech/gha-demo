@@ -66,14 +66,14 @@ jobs:
         id: output1
         run: echo "::set-output name=test::hello"
 
-      - name: Publish package
-        # Run this step just for releases
-        if: github.event_type == "release"
-        run: yarn publish
-        env:
-          # The GITHUB_TOKEN is automatically generated for each workflow run
-          # it is scoped to access in the same repo - you can also use a PAT here if needed
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Publish package
+#        # Run this step just for releases
+#        if: github.event_type == "release"
+#        run: yarn publish
+#        env:
+#          # The GITHUB_TOKEN is automatically generated for each workflow run
+#          # it is scoped to access in the same repo - you can also use a PAT here if needed
+#          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
   other-thing:
