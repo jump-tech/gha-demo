@@ -1,16 +1,22 @@
-
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Node.js CI
 
 on:
-  push:
-    branches: [ $default-branch ]
+#  push:
+#    branches: [ $default-branch ]
   pull_request:
     branches: [ $default-branch ]
+    # There are a default set of these enabled - you may need to add closed if you want to run a workflow
+    # on merge.
+    types:
+      - closed
+      - opened
+      - synchronize
   release:
-    - published
+    types:
+      - published
+# schedule:
+  # Daily at 8:20 UTC
+  # cron: '20 8 * * *'
 
 jobs:
   build:
@@ -25,7 +31,9 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
+          # Here is an example of using context in an expression
           node-version: ${{ matrix.node-version }}
+          # Cache the packages to speed up runs
           cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
       - run: yarn ci
@@ -37,6 +45,10 @@ jobs:
     needs: build
     steps:
       - name: Publishing package
+        # An example of a conditional
+        if: ${{ github.event_type == "release" }}
         run: yarn publish
         env:
+          # The GITHUB_TOKEN is automatically generated for each workflow run
+          # it is scoped to access in the same repo - you can also use a PAT here if needed
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
