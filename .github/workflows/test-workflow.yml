@@ -73,7 +73,7 @@ jobs:
 
       - name: Publish package
         # Run this step just for releases
-        if: github.event.release
+        if: github.event_name == 'release'
         run: yarn publish
         env:
           # The GITHUB_TOKEN is automatically generated for each workflow run
