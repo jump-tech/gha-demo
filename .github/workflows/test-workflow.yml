@@ -1,0 +1,21 @@
+on:
+  pull_request:
+    types:
+      - closed
+      - opened
+      - synchronize
+  workflow_dispatch:
+    inputs:
+  release:
+    types:
+      - published
+
+jobs:
+  run-tests1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: checkoutv2
+      - name:
+
+  run-test2:
