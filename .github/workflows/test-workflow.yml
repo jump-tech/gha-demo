@@ -68,7 +68,7 @@ jobs:
 
       - name: Publish package
         # Run this step just for releases
-        if: github.event_type == "release"
+        if: github.event.release
         run: yarn publish
         env:
           # The GITHUB_TOKEN is automatically generated for each workflow run
@@ -92,7 +92,7 @@ jobs:
 
   greet:
     runs-on: ubuntu-latest
-    if: github.event_type == "workflow_dispatch"
+    if: github.event.workflow_dispatch
     steps:
       - name: Send greeting
         run: echo "Hello ${{ github.event.inputs.name }}"
