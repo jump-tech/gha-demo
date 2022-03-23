@@ -58,13 +58,13 @@ jobs:
 
       - name: Create a warning annotation
         run: |
-          echo "WARN: This is a warning"
+          echo "::warning This is a warning"
       - name: Create an error annotation
         run: |
-          echo "ERROR: This is an error"
+          echo "::error This is an error"
       - name: Set an output for other jobs
         id: output1
-        run: echo "::set-output name=test::hello"
+        run: echo '::set-output name=test::hello'
 
       - name: Publish package
         # Run this step just for releases
@@ -81,7 +81,7 @@ jobs:
     needs: [build]
     steps:
       - run: |
-          echo "A post publish step gets the output: ${{ needs.build.output1 }}"
+          echo "A post publish step gets the output: ${{ needs.build.outputs.output1 }}"
 
   post-publish:
     runs-on: ubuntu-latest
