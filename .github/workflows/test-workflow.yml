@@ -9,6 +9,8 @@ on:
     branches: [ $default-branch ]
   pull_request:
     branches: [ $default-branch ]
+  release:
+    - published
 
 jobs:
   build:
