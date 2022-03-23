@@ -36,9 +36,15 @@ jobs:
     outputs:
       output1: ${{ steps.output1.outputs.test }}
 
+    # Allow the job to write github packages
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       # Check out the code to begin with
       - uses: actions/checkout@v2
+
       # Take the node JS version from the matrix and set it up
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
@@ -48,9 +54,14 @@ jobs:
           # Cache the packages to speed up runs
           cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com'
+
+      # Run yarn CI
       - run: yarn ci
+
+      # Run jest tests
       - name: Running jest tests
         run: yarn test
+
       - name: Create a warning annotation
         run: |
           echo "WARN: This is a warning"
@@ -61,19 +72,9 @@ jobs:
         id: output1
         run: echo "::set-output name=test::hello"
 
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      contents: read
-      packages: write
-    # Run this job just for releases
-    if: github.event_type == "release"
-    steps:
-      - name: Publishing package
-        # An example of a conditional
-
+      - name: Publish package
+        # Run this step just for releases
+        if: github.event_type == "release"
         run: yarn publish
         env:
           # The GITHUB_TOKEN is automatically generated for each workflow run
@@ -83,14 +84,14 @@ jobs:
 
   other-thing:
     runs-on: ubuntu-latest
-    needs: [publish, build]
+    needs: [build]
     steps:
       - run: |
           echo "A post publish step gets the output: ${{ needs.build.output1 }}"
 
   post-publish:
     runs-on: ubuntu-latest
-    needs: [publish, other-thing]
+    needs: [other-thing]
     steps:
       - run: |
           echo "A post publish step"
