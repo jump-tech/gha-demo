@@ -57,6 +57,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
+      packages: write
     # Run this job just for releases
     if: ${{ github.event_type == "release" }}
     steps:
