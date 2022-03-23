@@ -14,9 +14,17 @@ on:
   release:
     types:
       - published
-# schedule:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Person to greet'
+        default: 'World'
+        # Input has to be provided for the workflow to run
+        required: true
+  # schedule:
   # Daily at 8:20 UTC
   # cron: '20 8 * * *'
+
 
 jobs:
   build:
@@ -80,10 +88,16 @@ jobs:
       - run: |
           echo "A post publish step gets the output: ${{ needs.build.output1 }}"
 
-
   post-publish:
     runs-on: ubuntu-latest
     needs: [publish, other-thing]
     steps:
       - run: |
           echo "A post publish step"
+
+  greet:
+    runs-on: ubuntu-latest
+    if: github.event_type == "workflow_dispatch"
+    steps:
+      - name: Send greeting
+        run: echo "Hello ${{ github.event.inputs.name }}"
