@@ -25,9 +25,13 @@ jobs:
       matrix:
         node-version: [14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    outputs:
+      output1: ${{ steps.output1.outputs.test }}
 
     steps:
+      # Check out the code to begin with
       - uses: actions/checkout@v2
+      # Take the node JS version from the matrix and set it up
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -39,16 +43,44 @@ jobs:
       - run: yarn ci
       - name: Running jest tests
         run: yarn test
+      - name: Create a warning annotation
+        run: |
+          echo "WARN: This is a warning"
+      - name: Create an error annotation
+        run: |
+          echo "ERROR: This is an error"
+      - name: Set an output for other jobs
+        id: output1
+        run: echo "::set-output name=test::hello"
+
 
   publish:
     runs-on: ubuntu-latest
     needs: build
+    # Run this job just for releases
+    if: ${{ github.event_type == "release" }}
     steps:
       - name: Publishing package
         # An example of a conditional
-        if: ${{ github.event_type == "release" }}
+
         run: yarn publish
         env:
           # The GITHUB_TOKEN is automatically generated for each workflow run
           # it is scoped to access in the same repo - you can also use a PAT here if needed
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  other-thing:
+    runs-on: ubuntu-latest
+    needs: [publish, build]
+    steps:
+      - run: |
+          echo "A post publish step gets the output: ${{ needs.build.output1 }}"
+
+
+  post-publish:
+    runs-on: ubuntu-latest
+    needs: [publish, other-thing]
+    steps:
+      - run: |
+          echo "A post publish step"
